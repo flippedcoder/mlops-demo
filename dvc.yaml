@@ -1,0 +1,18 @@
+stages:
+  train:
+    cmd: python train.py
+    deps:
+    - data/MNIST
+    - train.py
+    params:
+    - lr
+    - seed
+    - weight_decay
+    outs:
+    - model.pt
+    metrics:
+    - results.json:
+        cache: false
+    plots:
+    - predictions.json:
+        cache: false

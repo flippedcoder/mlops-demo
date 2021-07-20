@@ -1,0 +1,7 @@
+.venv/
+.dvc/*
+data/
+model.pt
+predictions.json
+/dvclive
+.dvcignore
