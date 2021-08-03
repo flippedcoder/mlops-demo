@@ -7,7 +7,7 @@ import torch.nn.functional as F
 import torchvision
 
 
-EPOCHS = 100
+EPOCHS = 3
 
 
 class ConvNet(torch.nn.Module):

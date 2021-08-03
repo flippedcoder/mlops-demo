@@ -8,8 +8,8 @@ stages:
       size: 66544770
       nfiles: 8
     - path: train.py
-      md5: b99c147da0da02668d028c841574ea67
-      size: 3747
+      md5: 11a954ab2f795e11d16674eb5ce087fe
+      size: 3745
     params:
       params.yaml:
         lr: 0.0007
@@ -17,11 +17,11 @@ stages:
         weight_decay: 0
     outs:
     - path: model.pt
-      md5: 02f936e61d9a6dfb748346c9be194754
+      md5: 7e52ad47e9249bd26c72515d3b80072f
       size: 410191
     - path: predictions.json
-      md5: 0fc2ec8779e3a015e6aadf037216132c
+      md5: e4bf85e1610a849aa02e92338b4bbfc2
       size: 310000
     - path: results.json
-      md5: 9a3b35e25d85cd0b8ed691ae74a41b29
-      size: 53
+      md5: e04dc254c4f2f33e6cf343e9fe130380
+      size: 54
