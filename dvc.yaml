@@ -10,8 +10,7 @@ stages:
   train:
     cmd: python src/train.py ./data/ ./models/model.pkl
     deps:
-      - ./train.pkl
-      - ./test.pkl
+      - ./data/train.pkl
       - ./src/train.py
     params:
       - train.seed
