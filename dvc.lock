@@ -1,27 +1,43 @@
 schema: '2.0'
 stages:
   train:
-    cmd: python train.py
+    cmd: python src/train.py ./data/ ./models/model.pkl
     deps:
-    - path: data/MNIST
-      md5: 563f931b5aa3d66aaee35ca9ea59ff3e.dir
-      size: 66544770
-      nfiles: 8
-    - path: train.py
-      md5: 522c0121df4095b0abe1315ef2d32c29
-      size: 3745
+    - path: ./data/train.pkl
+      md5: aded63c3d28a53d952ebad6d207b00dd
+      size: 1198746
+    - path: ./src/train.py
+      md5: bdc3fe9dc24e35b4bb445ab0d9b2ff80
+      size: 968
     params:
       params.yaml:
-        lr: 0.005
-        seed: 473987
-        weight_decay: 0
+        train.min_split: 28
+        train.n_est: 350
+        train.seed: 20210428
     outs:
-    - path: model.pt
-      md5: 2fd1e67018a3d952bbeabfe3696b322e
-      size: 410191
-    - path: predictions.json
-      md5: 739f2f89576879fe2425c8e68efea5b8
-      size: 310000
-    - path: results.json
-      md5: 49cc587a4bb53e045f4b6e2c49b863f7
-      size: 54
+    - path: ./models/model.pkl
+      md5: e83de48598ffb7394f16a2afefa2c3c4
+      size: 2725026714
+  evaluate:
+    cmd: python src/evaluate.py ./models/model.pkl ./data scores.json prc.json roc.json
+    deps:
+    - path: ./data
+      md5: bf13f5407841b536c81e4933c8f753e9.dir
+      size: 6754552
+      nfiles: 20
+    - path: ./models/model.pkl
+      md5: e83de48598ffb7394f16a2afefa2c3c4
+      size: 2725026714
+    - path: src/evaluate.py
+      md5: 8005bcc84e9224875c7fb29193f5382b
+      size: 2166
+    outs:
+    - path: prc.json
+      md5: 5825c31ef79a071d598538c22694f269
+      size: 134280
+    - path: roc.json
+      md5: e0bbafd01467124be67bf4cd7417165f
+      size: 376561
+    - path: scores.json
+      md5: e1d931f34172afe64512b04ac933f0a7
+      size: 73

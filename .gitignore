@@ -1,7 +1,7 @@
-.venv/
-.dvc/*
-data/
-model.pt
-predictions.json
-/dvclive
-.dvcignore
+.venv
+.vscode
+.DS_Store
+results.json
+val_results.json
+/model.pt
+model.pkl

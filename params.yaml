@@ -1,3 +1,4 @@
-seed: 473987
-lr: 0.005
-weight_decay: 0
+train:
+  seed: 20210428
+  n_est: 350
+  min_split: 28

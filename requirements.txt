@@ -1,4 +1,9 @@
-dvc>=2.0.0a0
+dvc>=2.8.0
 dvclive
+evidently
+matplotlib
+numpy
+pandas
+sklearn
 torch
-torchvision>=0.9.1
+torchvision

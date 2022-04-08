@@ -1,0 +1,23 @@
+name: CML Report
+on: push
+jobs:
+  run:
+    runs-on: [ubuntu-latest]
+    container: docker://dvcorg/cml:0-dvc2-base1
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Generate metrics report
+        env:
+          REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          pip install -r requirements.txt
+          
+          dvc get https://github.com/iterative/dataset-registry/ dvc-course/hymenoptera_data
+
+          dvc exp run
+
+          dvc metrics show --show-md >> report.md
+
+          cml send-comment report.md
