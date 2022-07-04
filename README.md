@@ -1,5 +1,3 @@
-This is the project that accompanies the [Preventing Stale Models in Production blog post]().
-
 ## Get started
 
 Here's what you need to do to get this project running.
