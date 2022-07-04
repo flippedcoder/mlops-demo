@@ -1,12 +1,4 @@
 stages:
-  # prepare:
-  #   cmd: python src/prepare.py
-  #   deps:
-  #     - ./data/train.csv
-  #     - ./data/test.csv
-  #   outs:
-  #     - train.pkl
-  #     - test.pkl
   train:
     cmd: python src/train.py ./data/ ./models/model.pkl
     deps:

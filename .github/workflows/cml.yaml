@@ -13,7 +13,7 @@ jobs:
           REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           pip install -r requirements.txt
-          
+
           dvc get https://github.com/iterative/dataset-registry/ dvc-course/hymenoptera_data
 
           dvc exp run
