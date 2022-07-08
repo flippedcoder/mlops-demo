@@ -5,6 +5,7 @@ import sys
 import numpy as np
 import yaml
 from sklearn.ensemble import RandomForestClassifier
+from mlem.api import save
 
 params = yaml.safe_load(open("params.yaml"))["train"]
 
@@ -38,3 +39,10 @@ clf.fit(x, labels)
 
 with open(output, "wb") as fd:
     pickle.dump(clf, fd)
+
+save(
+    clf,
+    "clf",
+    sample_data=x,
+    description="Random Forest Classifier",
+)
