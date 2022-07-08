@@ -15,6 +15,7 @@ if len(sys.argv) != 3:
 
 input = sys.argv[1]
 output = sys.argv[2]
+
 seed = params["seed"]
 n_est = params["n_est"]
 min_split = params["min_split"]
