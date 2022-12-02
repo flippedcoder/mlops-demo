@@ -4,6 +4,7 @@ Here's what you need to do to get this project running.
 
 - Clone the repo
 - Create a virtual environment with a command like: `python -m venv .venv`
+- Activate the virtual environment with: `source .venv/bin/activate`
 - Install all of the dependencies with : `pip install -r requirements.txt`
 - Run the `bicycle_demand.ipynb` notebook
 
