@@ -13,18 +13,18 @@ stages:
   evaluate:
     cmd: python src/evaluate.py ./models/model.pkl ./data scores.json prc.json roc.json
     deps:
-    - ./data
-    - ./models/model.pkl
-    - src/evaluate.py
+      - ./data
+      - ./models/model.pkl
+      - ./src/evaluate.py
     metrics:
-    - scores.json:
-        cache: false
+      - scores.json:
+          cache: false
     plots:
-    - prc.json:
-        cache: false
-        x: recall
-        y: precision
-    - roc.json:
-        cache: false
-        x: fpr
-        y: tpr
+      - prc.json:
+          cache: false
+          x: recall
+          y: precision
+      - roc.json:
+          cache: false
+          x: fpr
+          y: tpr

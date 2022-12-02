@@ -1,5 +1,5 @@
 import os
-import pickle
+import pickle5 as pickle
 import sys
 
 import numpy as np
@@ -43,6 +43,5 @@ with open(output, "wb") as fd:
 save(
     clf,
     "clf",
-    sample_data=x,
-    description="Random Forest Classifier",
+    sample_data=x
 )
