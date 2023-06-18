@@ -6,6 +6,8 @@ model.pkl
 
 # virtual environments
 .venv
+
+# Visual Studio Code
 .vscode
 
 # macOS
