@@ -1,10 +1,13 @@
-dvc[s3]>=2.52.0
-dvclive
+composeml
+dvc
 evidently
+featuretools
+flask
 matplotlib
-mlem[fastapi]
+mlflow
 numpy
 pandas
 sklearn
+sqlalchemy
 torch
 torchvision
