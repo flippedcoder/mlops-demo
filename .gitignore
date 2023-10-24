@@ -18,3 +18,8 @@ model.pkl
 
 # pyenv
 .python-version
+
+# macOS
+.DS_Store
+
+
