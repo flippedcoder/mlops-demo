@@ -1,7 +1,25 @@
-.venv
-.vscode
-.DS_Store
+# app-specific generated files
 results.json
 val_results.json
 /model.pt
 model.pkl
+
+# virtual environments
+.venv
+
+# Visual Studio Code
+.vscode
+
+# macOS
+.DS_Store
+
+# PyCharm
+.idea/
+
+# pyenv
+.python-version
+
+# macOS
+.DS_Store
+
+
