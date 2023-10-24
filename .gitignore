@@ -5,3 +5,8 @@ results.json
 val_results.json
 /model.pt
 model.pkl
+
+.idea/
+.python-version
+
+
