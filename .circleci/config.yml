@@ -1,0 +1,163 @@
+version: 2.1
+
+workflows:
+  version: 2
+  ci:
+    jobs:
+    - build-and-deploy:
+        context: scuti
+        filters:
+          branches:
+            only:
+            - master
+            - migrate-to-cloudrun
+          tags:
+            only:
+            - /.*/
+
+jobs:
+  build-and-deploy:
+    docker:
+    - image: gcr.io/scutistore/ci:latest
+      auth:
+        username: _json_key
+        password: $GCE_SCUTISTORE
+    working_directory: /go/src/github.com/{{ORG_NAME}}/{{REPO_NAME}}
+    steps:
+    - setup_remote_docker
+    - checkout
+    - run:
+        name: Setup env
+        command: |
+          echo "export GKE_CLUSTER_NAME=scutistore" >> $BASH_ENV
+          echo "export GCE_PROJECT_NAME=scutistore" >> $BASH_ENV
+          echo "export MANIFEST_NAME=scuti-commerce" >> $BASH_ENV
+          echo "export IMAGE_NAME=gcr.io/scutistore/scuti-commerce" >> $BASH_ENV
+          
+          echo "export SHORT_GIT_HASH=$(git rev-parse --short HEAD)" >> $BASH_ENV
+    - run:
+        name: Setup env commit/tag
+        command: |
+          ## Check if we're releasing a final version
+          if [ $(semtag getfinal) = $(semtag getcurrent)  ]
+          then
+            TAG_TO_USE=$(semtag getfinal)
+          else
+            TAG_TO_USE=${SHORT_GIT_HASH}
+          fi
+          echo "export TAG_TO_USE=${TAG_TO_USE}" >> $BASH_ENV
+
+          ## Check if we're releasing a final version
+          echo "Printing CIRCLE_TAG"
+          echo ${CIRCLE_TAG}
+          echo "Printing TAG_TO_USE"
+          echo ${TAG_TO_USE}
+          if [ "${CIRCLE_TAG}" = "${TAG_TO_USE}" ]
+          then
+            ENV="production"
+          # Deploy master, but not a release, to staging
+          elif [ "${CIRCLE_BRANCH}" = "master" ]
+          then
+            ENV="dev"
+          fi
+
+          # Split CIRCLE_TAG by - to get 1.2.3 and rc.5
+          SPLIT=($(echo $CIRCLE_TAG | tr "-" " "))
+          echo "split ${SPLIT}"
+          if [ ${#SPLIT[@]} = 2 ]
+          then
+            # Then split rc.5 by . to get rc and decide on env
+            SUBSTR=($(echo ${SPLIT[1]} | tr "." " "))
+            echo "substr ${SUBSTR}"
+            if [ "${SUBSTR[0]}" = "staging" ]
+            then
+              ENV="${SUBSTR[0]}"
+            elif [ "${SUBSTR[0]}" = "production" ]
+            then
+              ENV="${SUBSTR[0]}"
+            fi
+          else
+            echo "SPLIT length != 2"
+          fi
+          
+          echo "export ENV=${ENV}" >> $BASH_ENV
+    - run:
+        name: Debug env
+        command: printenv
+    - run:
+        name: Setup google-cloud-sdk
+        command: |
+          source /home/circleci/google-cloud-sdk/path.bash.inc  
+          
+          # Configure gcloud
+          echo $GCE_SCUTISTORE | gcloud auth activate-service-account --key-file=-
+          gcloud --quiet config set project "${GCE_PROJECT_NAME}"
+          gcloud --quiet auth configure-docker
+    - run:
+        name: Pull build dependencies
+        command: |
+          source /home/circleci/google-cloud-sdk/path.bash.inc
+          
+          if gcloud container images describe "${IMAGE_NAME}:${TAG_TO_USE}"
+          then
+            echo "op: exit - image exists"
+            exit 0
+          fi
+          
+          docker pull node:12-alpine
+    - run:
+        name: Build image
+        command: |
+          source /home/circleci/google-cloud-sdk/path.bash.inc
+
+          # Check if the used tag has already been built
+          if gcloud container images describe "${IMAGE_NAME}:${TAG_TO_USE}"
+          then
+            echo "op: exit - image exists"
+            exit 0
+          fi
+
+          docker build -t "${IMAGE_NAME}:${TAG_TO_USE}" .
+          docker push "${IMAGE_NAME}:${TAG_TO_USE}"
+
+          # If not already done, create an image for the SHORT_GIT_HASH too to avoid another build when this commit is pushed
+          if ! gcloud container images describe "${IMAGE_NAME}:${SHORT_GIT_HASH}"
+          then
+            docker tag "${IMAGE_NAME}:${TAG_TO_USE}" "${IMAGE_NAME}:${SHORT_GIT_HASH}"
+            docker push "${IMAGE_NAME}:${SHORT_GIT_HASH}"
+          fi
+    - run:
+        name: Install `docker-compose`
+        command: |
+          curl -L https://github.com/docker/compose/releases/download/1.19.0/docker-compose-`uname -s`-`uname -m` > ~/docker-compose
+          chmod +x ~/docker-compose
+          sudo mv ~/docker-compose /usr/local/bin/docker-compose
+          echo "export COMPOSE_TLS_VERSION=TLSv1_2" >> $BASH_ENV
+    - run:
+        name: Test using `docker-compose`
+        command: |
+          docker-compose -f docker-compose.tests.yml up --build --exit-code-from test
+    - run:
+        name: Deploy
+        command: |
+          if [ "${ENV}" = "" ]
+          then
+            echo "op: exit - no env"
+            exit 0
+          fi
+          
+          source /home/circleci/google-cloud-sdk/path.bash.inc
+          
+          cd /go/src/github.com/{{ORG_NAME}}
+          
+          # Get scuti-ops
+          git clone git@github.com:scuti-ai/scuti-ops.git
+          cd scuti-ops
+          
+          # Checkout non-master branch if needed
+          #git checkout origin/master
+
+          sed -i "s/%TAG%/${SHORT_GIT_HASH}/g" "manifests/scuti-commerce/${ENV}.yaml"
+          sed -i "s/%APP_VERSION%/${TAG_TO_USE}/g" "manifests/scuti-commerce/${ENV}.yaml"
+          
+          gcloud beta run services replace "manifests/scuti-commerce/${ENV}.yaml" --platform managed --region us-central1
