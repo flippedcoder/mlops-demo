@@ -1,4 +1,6 @@
 [core]
-    remote = bikes
+    remote = myremote
 ['remote "bikes"']
     url = s3://updatedbikedata
+['remote "myremote"']
+    url = ..

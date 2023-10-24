@@ -39,9 +39,3 @@ clf.fit(x, labels)
 
 with open(output, "wb") as fd:
     pickle.dump(clf, fd)
-
-save(
-    clf,
-    "clf",
-    sample_data=x
-)
