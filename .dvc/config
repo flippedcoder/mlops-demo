@@ -1,6 +1,8 @@
 [core]
-    remote = myremote
+    remote = mydata
 ['remote "bikes"']
     url = s3://updatedbikedata
 ['remote "myremote"']
     url = ..
+['remote "mydata"']
+    url = /tmp/dvcspot

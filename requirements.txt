@@ -1,8 +1,11 @@
-dvc[s3]>=2.52.0
+composeml
+dvc[s3]
 dvclive
 evidently
+featuretools
 matplotlib
 mlem[fastapi]
+mlflow
 numpy
 pandas
 sklearn
