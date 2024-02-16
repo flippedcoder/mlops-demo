@@ -3,11 +3,13 @@ dvc[s3]
 dvclive
 evidently
 featuretools
+flask
 matplotlib
 mlem[fastapi]
 mlflow
 numpy
 pandas
 sklearn
+sqlalchemy
 torch
 torchvision
